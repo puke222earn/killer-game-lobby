@@ -118,7 +118,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
           const roomId = String(roomData?.roomId ?? roomData?.code ?? roomData?.id ?? "");
           setRoom({
             roomId,
-            hostId: roomData?.hostId ?? payload?.socketId ?? mySocketIdRef.current ?? "",
+            hostId: roomData?.hostId ?? payload?.socketId ?? socketRef.current?.id ?? "",
             status: roomData?.status ?? "waiting",
             players,
           });
@@ -166,29 +166,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
               : r,
           );
           if (payload?.player?.name) toast.success(`${payload.player.name} joined the room`);
-          break;
-        case "ROOM_JOINED": {
-          setBusy(false);
-          setError(null);
-          const players: Player[] = Array.isArray(roomData?.players) ? roomData.players : [];
-          const roomId = String(roomData?.roomId ?? roomData?.code ?? roomData?.id ?? "");
-          setRoom({
-            roomId,
-            hostId: roomData?.hostId ?? "",
-            status: roomData?.status ?? "waiting",
-            players,
-          });
-          setScreen("lobby");
-          break;
-        }
-        case "PLAYER_JOINED":
-          setRoom((r) =>
-            r && payload?.player
-              ? r.players.some((p) => p.socketId === payload.player.socketId)
-                ? r
-                : { ...r, players: [...r.players, payload.player] }
-              : r,
-          );
           break;
         case "PLAYER_LEFT":
         case "PLAYER_DISCONNECTED":
