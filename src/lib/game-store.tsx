@@ -201,10 +201,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
           setScreen("home");
           toast("You were removed from the room");
           break;
-        case "GAME_STARTED":
-          toast("Game starting!");
-          setRoom((r) => (r ? { ...r, status: "in_progress" } : r));
-          break;
         case "ERROR":
           setBusy(false);
           setError(reason ?? "Something went wrong");
