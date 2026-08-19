@@ -32,7 +32,24 @@ type ServerMessage = {
   reason?: string;
 };
 
-export type Screen = "name" | "home" | "lobby";
+export type GridPos = { row: number; col: number };
+
+export type GamePlayer = {
+  socketId: string;
+  name: string;
+  pos: GridPos;
+  alive?: boolean;
+  kills?: number;
+};
+
+export type GameData = {
+  grid: number[][];
+  players: GamePlayer[];
+  durationMs: number;
+  startedAt: number;
+};
+
+export type Screen = "name" | "home" | "lobby" | "game";
 
 type GameState = {
   screen: Screen;
@@ -44,6 +61,8 @@ type GameState = {
   error: string | null;
   busy: boolean;
   isHost: boolean;
+  game: GameData | null;
+  isKiller: boolean;
   setName: (serverUrl: string, name: string) => void;
   createRoom: () => void;
   joinRoom: (roomId: string) => void;
@@ -57,6 +76,8 @@ type GameState = {
 const Ctx = createContext<GameState | null>(null);
 
 export function GameProvider({ children }: { children: ReactNode }) {
+  const [game, setGame] = useState<GameData | null>(null);
+  const [isKiller, setIsKiller] = useState(false);
   const socketRef = useRef<Socket | null>(null);
   const [screen, setScreen] = useState<Screen>("name");
   const [connected, setConnected] = useState(false);
@@ -91,6 +112,45 @@ export function GameProvider({ children }: { children: ReactNode }) {
           if (payload?.socketId) setMySocketId(payload.socketId);
           break;
         case "ROOM_CREATED":
+        case "GAME_STARTED":
+          setGame({
+            grid: payload.grid,
+            players: payload.players ?? [],
+            durationMs: payload.durationMs,
+            startedAt: Date.now(),
+          });
+          setRoom((r) => (r ? { ...r, status: "PLAYING" } : r));
+          setScreen("game");
+          toast.success("Game started!");
+          break;
+
+        case "YOU_ARE_KILLER":
+          setIsKiller(true);
+          break;
+        case "ROOM_JOINED": {
+          setBusy(false);
+          setError(null);
+          const players: Player[] = Array.isArray(roomData?.players) ? roomData.players : [];
+          const roomId = String(roomData?.roomId ?? roomData?.code ?? roomData?.id ?? "");
+          setRoom({
+            roomId,
+            hostId: roomData?.hostId ?? "",
+            status: roomData?.status ?? "waiting",
+            players,
+          });
+          setScreen("lobby");
+          break;
+        }
+        case "PLAYER_JOINED":
+          setRoom((r) =>
+            r && payload?.player
+              ? r.players.some((p) => p.socketId === payload.player.socketId)
+                ? r
+                : { ...r, players: [...r.players, payload.player] }
+              : r,
+          );
+          if (payload?.player?.name) toast.success(`${payload.player.name} joined the room`);
+          break;
         case "ROOM_JOINED": {
           setBusy(false);
           setError(null);
@@ -119,23 +179,29 @@ export function GameProvider({ children }: { children: ReactNode }) {
           setRoom((r) =>
             r ? { ...r, players: r.players.filter((p) => p.socketId !== payload?.socketId) } : r,
           );
-          if (payload?.name) toast(`${payload.name} left the room`);
+          if (payload?.name) toast.error(`${payload.name} left the room`);
           break;
         case "HOST_CHANGED":
           setRoom((r) => (r ? { ...r, hostId: payload?.newHostId ?? r.hostId } : r));
-          if (payload?.newHostName) toast(`${payload.newHostName} is now the host`);
+          if (payload?.newHostName) toast.success(`${payload.newHostName} is now the host`);
           break;
         case "PLAYER_READY_TOGGLED":
           setRoom((r) =>
             r
               ? {
-                  ...r,
-                  players: r.players.map((p) =>
-                    p.socketId === payload?.socketId ? { ...p, ready: payload.ready } : p,
-                  ),
-                }
+                ...r,
+                players: r.players.map((p) =>
+                  p.socketId === payload?.socketId ? { ...p, ready: payload.ready } : p,
+                ),
+              }
               : r,
           );
+          break;
+        case "PLAYER_KICKED":
+          setRoom((r) =>
+            r ? { ...r, players: r.players.filter((p) => p.socketId !== payload?.socketId) } : r,
+          );
+          if (payload?.name) toast.error(`${payload.name} was kicked`);
           break;
         case "KICKED":
           setRoom(null);
@@ -210,7 +276,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       room,
       error,
       busy,
-      isHost,
+      isHost, game,
+      isKiller,
       setName,
       createRoom: () => {
         setError(null);

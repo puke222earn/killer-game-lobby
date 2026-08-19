@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { useGame } from "@/lib/game-store";
 import { Button } from "@/components/ui/button";
 import { PlayerRow } from "@/components/lobby/PlayerRow";
+import { toast } from "sonner";
 
 export function LobbyScreen() {
   const { room, mySocketId, isHost, toggleReady, kickPlayer, startGame, leaveToHome, error } =
@@ -17,7 +18,7 @@ export function LobbyScreen() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="sm" onClick={leaveToHome}>
-          <ArrowLeft className="size-4" /> Leave
+          <ArrowLeft className="size-4" /> Back
         </Button>
         <span className="text-xs text-muted-foreground">
           {room.players.length} player{room.players.length === 1 ? "" : "s"}
@@ -59,8 +60,9 @@ export function LobbyScreen() {
           className="h-14 w-full text-base"
           onClick={toggleReady}
         >
-          {me?.ready ? "Ready ✓ — tap to cancel" : "I'm Ready"}
+          {me?.ready ? "Cancel" : "Ready"}
         </Button>
+        
       )}
     </div>
   );

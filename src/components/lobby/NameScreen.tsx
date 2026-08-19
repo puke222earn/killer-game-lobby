@@ -4,15 +4,18 @@ import { useGame } from "@/lib/game-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 export function NameScreen() {
   const { setName, busy, connecting, error } = useGame();
-  const [name, setNameInput] = useState("");
-  const [server, setServer] = useState("ws://192.168.1.1:3001");
+  const [name, setNameInput] = useState(() => localStorage.getItem("playerName") ?? "");
+  const [server, setServer] = useState(() => localStorage.getItem("serverUrl") ?? "ws://localhost:3001");
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
+    localStorage.setItem("playerName", name.trim());
+    localStorage.setItem("serverUrl", server.trim());
     setName(server, name.trim());
   };
 

@@ -39,7 +39,7 @@ function Index() {
   return (
     <GameProvider>
       <Screens />
-      <Toaster position="top-center" />
+      <Toaster richColors position="top-center" />
     </GameProvider>
   );
 }
