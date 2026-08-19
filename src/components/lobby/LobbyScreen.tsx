@@ -34,9 +34,10 @@ export function LobbyScreen() {
       </div>
 
       <div className="space-y-2">
-        {room.players.map((p) => (
+        {room.players.map((p, i) => (
           <PlayerRow
-            key={p.socketId}
+            key={p.socketId ?? i}
+
             player={p}
             isMe={p.socketId === mySocketId}
             isHost={p.socketId === room.hostId}

@@ -78,77 +78,91 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const handleMessage = useCallback((msg: ServerMessage) => {
-    const { action, payload, reason } = msg ?? {};
-    switch (action) {
-      case "NAME_SET":
-        setBusy(false);
-        setScreen("home");
-        if (payload?.socketId) setMySocketId(payload.socketId);
-        break;
-      case "ROOM_CREATED":
-      case "ROOM_JOINED":
-        setBusy(false);
-        setError(null);
-        setRoom({
-          roomId: payload.roomId,
-          hostId: payload.hostId,
-          status: payload.status,
-          players: payload.players ?? [],
-        });
-        setScreen("lobby");
-        break;
-      case "PLAYER_JOINED":
-        setRoom((r) =>
-          r && payload?.player
-            ? r.players.some((p) => p.socketId === payload.player.socketId)
-              ? r
-              : { ...r, players: [...r.players, payload.player] }
-            : r,
-        );
-        break;
-      case "PLAYER_LEFT":
-      case "PLAYER_DISCONNECTED":
-        setRoom((r) =>
-          r ? { ...r, players: r.players.filter((p) => p.socketId !== payload?.socketId) } : r,
-        );
-        if (payload?.name) toast(`${payload.name} left the room`);
-        break;
-      case "HOST_CHANGED":
-        setRoom((r) => (r ? { ...r, hostId: payload.newHostId } : r));
-        if (payload?.newHostName) toast(`${payload.newHostName} is now the host`);
-        break;
-      case "PLAYER_READY_TOGGLED":
-        setRoom((r) =>
-          r
-            ? {
-                ...r,
-                players: r.players.map((p) =>
-                  p.socketId === payload?.socketId ? { ...p, ready: payload.ready } : p,
-                ),
-              }
-            : r,
-        );
-        break;
-      case "KICKED":
-        setRoom(null);
-        setScreen("home");
-        toast("You were removed from the room");
-        break;
-      case "GAME_STARTED":
-        toast("Game starting!");
-        setRoom((r) => (r ? { ...r, status: "in_progress" } : r));
-        break;
-      case "ERROR":
-        setBusy(false);
-        setError(reason ?? "Something went wrong");
-        break;
-      default:
-        if (msg?.result === "failure") {
+    const { action, reason } = msg ?? {};
+    const payload: any = msg?.payload ?? {};
+    // Servers vary: room data may be nested under payload.room
+    const roomData: any = payload.room ?? payload;
+    console.log("[socket message]", action, msg);
+    try {
+      switch (action) {
+        case "NAME_SET":
+          setBusy(false);
+          setScreen("home");
+          if (payload?.socketId) setMySocketId(payload.socketId);
+          break;
+        case "ROOM_CREATED":
+        case "ROOM_JOINED": {
+          setBusy(false);
+          setError(null);
+          const players: Player[] = Array.isArray(roomData?.players) ? roomData.players : [];
+          const roomId = String(roomData?.roomId ?? roomData?.code ?? roomData?.id ?? "");
+          setRoom({
+            roomId,
+            hostId: roomData?.hostId ?? "",
+            status: roomData?.status ?? "waiting",
+            players,
+          });
+          setScreen("lobby");
+          break;
+        }
+        case "PLAYER_JOINED":
+          setRoom((r) =>
+            r && payload?.player
+              ? r.players.some((p) => p.socketId === payload.player.socketId)
+                ? r
+                : { ...r, players: [...r.players, payload.player] }
+              : r,
+          );
+          break;
+        case "PLAYER_LEFT":
+        case "PLAYER_DISCONNECTED":
+          setRoom((r) =>
+            r ? { ...r, players: r.players.filter((p) => p.socketId !== payload?.socketId) } : r,
+          );
+          if (payload?.name) toast(`${payload.name} left the room`);
+          break;
+        case "HOST_CHANGED":
+          setRoom((r) => (r ? { ...r, hostId: payload?.newHostId ?? r.hostId } : r));
+          if (payload?.newHostName) toast(`${payload.newHostName} is now the host`);
+          break;
+        case "PLAYER_READY_TOGGLED":
+          setRoom((r) =>
+            r
+              ? {
+                  ...r,
+                  players: r.players.map((p) =>
+                    p.socketId === payload?.socketId ? { ...p, ready: payload.ready } : p,
+                  ),
+                }
+              : r,
+          );
+          break;
+        case "KICKED":
+          setRoom(null);
+          setScreen("home");
+          toast("You were removed from the room");
+          break;
+        case "GAME_STARTED":
+          toast("Game starting!");
+          setRoom((r) => (r ? { ...r, status: "in_progress" } : r));
+          break;
+        case "ERROR":
           setBusy(false);
           setError(reason ?? "Something went wrong");
-        }
+          break;
+        default:
+          if (msg?.result === "failure") {
+            setBusy(false);
+            setError(reason ?? "Something went wrong");
+          }
+      }
+    } catch (err) {
+      console.error("Failed to handle server message", action, err);
+      setBusy(false);
+      setError(`Bad server response for ${action ?? "message"}`);
     }
   }, []);
+
 
   const setName = useCallback(
     (serverUrl: string, playerName: string) => {
@@ -231,16 +245,20 @@ export function useGame() {
 }
 
 export function avatarColor(seed: string) {
+  const s = seed || "?";
   let hash = 0;
-  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) % 360;
+  for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) % 360;
   return `oklch(0.68 0.17 ${hash})`;
 }
 
 export function initials(name: string) {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? "")
-    .join("");
+  return (
+    (name ?? "")
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((w) => w[0]?.toUpperCase() ?? "")
+      .join("") || "?"
+  );
 }
+
