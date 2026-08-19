@@ -56,14 +56,11 @@ export function GameScreen() {
         <div
           className="relative grid gap-px overflow-hidden rounded-2xl bg-border"
           style={{
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ["--cols" as any]: cols,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ["--rows" as any]: rows,
-            gridTemplateColumns: "repeat(var(--cols), minmax(0, 1fr))",
-            gridTemplateRows: "repeat(var(--rows), minmax(0, 1fr))",
+            gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+            gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
           }}
         >
+
           {game.grid.map((row, r) =>
             row.map((cell, c) => (
               <div
