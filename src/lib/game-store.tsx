@@ -67,7 +67,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => () => socketRef.current?.disconnect(), []);
+  useEffect(() => {
+    return () => {
+      socketRef.current?.disconnect();
+    };
+  }, []);
 
   const send = useCallback((action: string, payload?: unknown) => {
     socketRef.current?.emit("message", payload ? { action, payload } : { action });
