@@ -111,18 +111,34 @@ export function GameProvider({ children }: { children: ReactNode }) {
           setScreen("home");
           if (payload?.socketId) setMySocketId(payload.socketId);
           break;
-        case "ROOM_CREATED":
-        case "GAME_STARTED":
-          setGame({
-            grid: payload.grid,
-            players: payload.players ?? [],
-            durationMs: payload.durationMs,
-            startedAt: Date.now(),
+        case "ROOM_CREATED": {
+          setBusy(false);
+          setError(null);
+          const players: Player[] = Array.isArray(roomData?.players) ? roomData.players : [];
+          const roomId = String(roomData?.roomId ?? roomData?.code ?? roomData?.id ?? "");
+          setRoom({
+            roomId,
+            hostId: roomData?.hostId ?? payload?.socketId ?? socketRef.current?.id ?? "",
+            status: roomData?.status ?? "waiting",
+            players,
           });
-          setRoom((r) => (r ? { ...r, status: "PLAYING" } : r));
-          setScreen("game");
-          toast.success("Game started!");
+          setScreen("lobby");
           break;
+        }
+        case "GAME_STARTED":
+          if (Array.isArray(payload?.grid)) {
+            setGame({
+              grid: payload.grid,
+              players: Array.isArray(payload.players) ? payload.players : [],
+              durationMs: payload.durationMs ?? 0,
+              startedAt: Date.now(),
+            });
+            setRoom((r) => (r ? { ...r, status: "PLAYING" } : r));
+            setScreen("game");
+            toast.success("Game started!");
+          }
+          break;
+
 
         case "YOU_ARE_KILLER":
           setIsKiller(true);
@@ -150,29 +166,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
               : r,
           );
           if (payload?.player?.name) toast.success(`${payload.player.name} joined the room`);
-          break;
-        case "ROOM_JOINED": {
-          setBusy(false);
-          setError(null);
-          const players: Player[] = Array.isArray(roomData?.players) ? roomData.players : [];
-          const roomId = String(roomData?.roomId ?? roomData?.code ?? roomData?.id ?? "");
-          setRoom({
-            roomId,
-            hostId: roomData?.hostId ?? "",
-            status: roomData?.status ?? "waiting",
-            players,
-          });
-          setScreen("lobby");
-          break;
-        }
-        case "PLAYER_JOINED":
-          setRoom((r) =>
-            r && payload?.player
-              ? r.players.some((p) => p.socketId === payload.player.socketId)
-                ? r
-                : { ...r, players: [...r.players, payload.player] }
-              : r,
-          );
           break;
         case "PLAYER_LEFT":
         case "PLAYER_DISCONNECTED":
@@ -207,10 +200,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
           setRoom(null);
           setScreen("home");
           toast("You were removed from the room");
-          break;
-        case "GAME_STARTED":
-          toast("Game starting!");
-          setRoom((r) => (r ? { ...r, status: "in_progress" } : r));
           break;
         case "ERROR":
           setBusy(false);

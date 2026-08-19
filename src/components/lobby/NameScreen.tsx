@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Skull } from "lucide-react";
 import { useGame } from "@/lib/game-store";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,15 @@ import { toast } from "sonner";
 
 export function NameScreen() {
   const { setName, busy, connecting, error } = useGame();
-  const [name, setNameInput] = useState(() => localStorage.getItem("playerName") ?? "");
-  const [server, setServer] = useState(() => localStorage.getItem("serverUrl") ?? "ws://localhost:3001");
+  const [name, setNameInput] = useState("");
+  const [server, setServer] = useState("ws://localhost:3001");
+
+  useEffect(() => {
+    const savedName = localStorage.getItem("playerName");
+    const savedServer = localStorage.getItem("serverUrl");
+    if (savedName) setNameInput(savedName);
+    if (savedServer) setServer(savedServer);
+  }, []);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
