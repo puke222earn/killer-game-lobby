@@ -1,24 +1,45 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Toaster } from "@/components/ui/sonner";
+import { GameProvider, useGame } from "@/lib/game-store";
+import { NameScreen } from "@/components/lobby/NameScreen";
+import { HomeScreen } from "@/components/lobby/HomeScreen";
+import { LobbyScreen } from "@/components/lobby/LobbyScreen";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Killer Game — Multiplayer Lobby" },
+      {
+        name: "description",
+        content:
+          "Create or join a Killer Game room with a 6-digit code, get everyone ready, and start playing together.",
+      },
+      { property: "og:title", content: "Killer Game — Multiplayer Lobby" },
+      {
+        property: "og:description",
+        content: "Create or join a room with a 6-digit code and start the Killer Game.",
+      },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
+function Screens() {
+  const { screen } = useGame();
+  return (
+    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-5 py-8">
+      {screen === "name" && <NameScreen />}
+      {screen === "home" && <HomeScreen />}
+      {screen === "lobby" && <LobbyScreen />}
+    </main>
+  );
+}
+
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <GameProvider>
+      <Screens />
+      <Toaster position="top-center" />
+    </GameProvider>
   );
 }
