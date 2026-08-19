@@ -33,6 +33,8 @@ function Screens() {
       {screen === "name" && <NameScreen />}
       {screen === "home" && <HomeScreen />}
       {screen === "lobby" && <LobbyScreen />}
+      {screen === "game" && <GameScreen />}
+
     </main>
   );
 }
