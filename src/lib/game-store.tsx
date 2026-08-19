@@ -142,6 +142,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
         case "YOU_ARE_KILLER":
           setIsKiller(true);
+          toast.error("You are the Killer. Stay hidden.");
+          break;
+        case "YOU_ARE_NOT_KILLER":
+          setIsKiller(false);
+          toast.success("Killer changed");
           break;
         case "ROOM_JOINED": {
           setBusy(false);
@@ -288,7 +293,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       },
       clearError: () => setError(null),
     }),
-    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, setName, send],
+    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, setName, send],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
