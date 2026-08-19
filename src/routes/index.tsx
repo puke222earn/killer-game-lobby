@@ -4,6 +4,8 @@ import { GameProvider, useGame } from "@/lib/game-store";
 import { NameScreen } from "@/components/lobby/NameScreen";
 import { HomeScreen } from "@/components/lobby/HomeScreen";
 import { LobbyScreen } from "@/components/lobby/LobbyScreen";
+import { GameScreen } from "@/components/game/GameScreen";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
