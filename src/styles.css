@@ -160,8 +160,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: -1.25rem;
-  height: 1.5rem;
+  top: -1.5rem;
+  height: 2rem;
   pointer-events: none;
   z-index: 10;
 }
@@ -169,12 +169,12 @@
 .runner {
   position: absolute;
   top: 0;
-  left: -1.5rem;
+  left: -2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 2rem;
+  height: 2rem;
   animation: runner-loop 4.5s linear infinite;
   will-change: transform;
 }
