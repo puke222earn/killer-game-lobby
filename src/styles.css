@@ -154,3 +154,64 @@
 .animate-shake {
   animation: shake 0.3s ease-in-out;
 }
+
+/* Landing screen runner animation */
+.runner-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1.25rem;
+  height: 1.5rem;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.runner {
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  background: var(--color-destructive);
+  color: var(--color-destructive-foreground);
+  animation: runner-loop 4.5s linear infinite;
+  will-change: transform;
+}
+
+@keyframes runner-loop {
+  0% {
+    left: -1.5rem;
+    transform: translateX(0) scale(1);
+  }
+  35% {
+    left: 50%;
+    transform: translateX(-50%) scale(1);
+  }
+  45% {
+    left: 50%;
+    transform: translateX(-50%) scale(1.15);
+  }
+  55% {
+    left: 50%;
+    transform: translateX(-50%) scale(1);
+  }
+  90% {
+    left: 100%;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    left: 100%;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .runner {
+    animation: none;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
