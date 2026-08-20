@@ -6,6 +6,7 @@ import { NameScreen } from "@/components/lobby/NameScreen";
 import { HomeScreen } from "@/components/lobby/HomeScreen";
 import { LobbyScreen } from "@/components/lobby/LobbyScreen";
 import { GameScreen } from "@/components/game/GameScreen";
+import { EndScreen } from "@/components/lobby/endScreen";
 
 
 export const Route = createFileRoute("/")({
@@ -36,6 +37,7 @@ function Screens() {
       {screen === "home" && <HomeScreen />}
       {screen === "lobby" && <LobbyScreen />}
       {screen === "game" && <GameScreen />}
+      {screen === "ended" && <EndScreen />}
 
     </main>
   );

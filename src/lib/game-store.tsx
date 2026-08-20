@@ -18,6 +18,12 @@ export type Player = {
   isHost?: boolean;
 };
 
+export type Standing = {
+  socketId: string;
+  name: string;
+  kills: number;
+};
+
 export type GameEvent = {
   id: string;
   text: string;
@@ -55,7 +61,7 @@ export type GameData = {
   startedAt: number;
 };
 
-export type Screen = "landing" | "name" | "home" | "lobby" | "game";
+export type Screen = "landing" | "name" | "home" | "lobby" | "game" | "ended";
 
 type GameState = {
   screen: Screen;
@@ -82,6 +88,7 @@ type GameState = {
   shakeTrigger: number;
   gameEvents: GameEvent[];
   deathMarkers: { socketId: string; pos: GridPos }[];
+  standings: Standing[];
 };
 
 const Ctx = createContext<GameState | null>(null);
@@ -103,6 +110,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const gameRef = useRef<GameData | null>(game);
   const mySocketIdRef = useRef<string | null>(mySocketId);
   const [deathMarkers, setDeathMarkers] = useState<{ socketId: string; pos: GridPos }[]>([]);
+  const [standings, setStandings] = useState<Standing[]>([]);
 
   useEffect(() => {
     return () => {
@@ -192,6 +200,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
           setScreen("lobby");
           break;
         }
+        case "GAME_ENDED":
+          setStandings(Array.isArray(payload?.standings) ? payload.standings : []);
+          setScreen("ended");
+          break;
         case "PLAYER_JOINED":
           setRoom((r) =>
             r && payload?.player
@@ -380,10 +392,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       },
       clearError: () => setError(null),
       shakeTrigger,
-      deathMarkers
-
+      deathMarkers,
+      standings
     }),
-    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers],
+    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers, standings],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
