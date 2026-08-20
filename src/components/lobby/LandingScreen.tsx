@@ -1,5 +1,34 @@
-import { Skull } from "lucide-react";
 import { useGame } from "@/lib/game-store";
+
+function KillerSilhouette() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="killer-silhouette"
+      fill="currentColor"
+      aria-label="Killer"
+    >
+      <rect className="leg-left" x="11" y="13" width="2" height="7.5" rx="1" />
+      <rect className="leg-right" x="11" y="13" width="2" height="7.5" rx="1" />
+
+      <circle cx="12" cy="5" r="2.8" />
+      <rect x="10" y="7" width="4" height="7" rx="1.5" />
+
+      <rect x="9" y="8" width="1.6" height="5" rx="0.8" />
+
+      <g className="knife-arm">
+        <path
+          d="M13.5 8.5L15.5 13.5"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path d="M15.5 13.5L18 14.5L16.5 17Z" />
+      </g>
+    </svg>
+  );
+}
 
 export function LandingScreen() {
   const { goToName } = useGame();
@@ -16,7 +45,7 @@ export function LandingScreen() {
       <div className="relative">
         <div className="runner-track">
           <div className="runner">
-            <Skull className="size-5" />
+            <KillerSilhouette />
           </div>
         </div>
 
