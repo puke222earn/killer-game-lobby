@@ -55,7 +55,7 @@ export type GameData = {
   startedAt: number;
 };
 
-export type Screen = "name" | "home" | "lobby" | "game";
+export type Screen = "landing" | "name" | "home" | "lobby" | "game";
 
 type GameState = {
   screen: Screen;
@@ -69,6 +69,7 @@ type GameState = {
   isHost: boolean;
   game: GameData | null;
   isKiller: boolean;
+  goToName: () => void;
   setName: (serverUrl: string, name: string) => void;
   createRoom: () => void;
   joinRoom: (roomId: string) => void;
@@ -89,7 +90,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [game, setGame] = useState<GameData | null>(null);
   const [isKiller, setIsKiller] = useState(false);
   const socketRef = useRef<Socket | null>(null);
-  const [screen, setScreen] = useState<Screen>("name");
+  const [screen, setScreen] = useState<Screen>("landing");
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [name, setNameState] = useState("");
