@@ -357,6 +357,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       isHost, game,
       isKiller,
       gameEvents,
+      goToName: () => setScreen("name"),
       setName,
       createRoom: () => {
         setError(null);
