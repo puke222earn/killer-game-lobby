@@ -184,27 +184,35 @@
 @keyframes runner-loop {
   0% {
     left: -1.5rem;
-    transform: translateX(0) scale(1);
+    transform: translateX(0) translateY(0) scale(1);
   }
   35% {
     left: 50%;
-    transform: translateX(-50%) scale(1);
+    transform: translateX(-50%) translateY(0) scale(1);
   }
-  45% {
+  40% {
     left: 50%;
-    transform: translateX(-50%) scale(1.15);
+    transform: translateX(-50%) translateY(-2px) scale(1.12);
   }
-  55% {
+  50% {
     left: 50%;
-    transform: translateX(-50%) scale(1);
+    transform: translateX(-50%) translateY(2px) scale(1.05);
+  }
+  60% {
+    left: 50%;
+    transform: translateX(-50%) translateY(-1px) scale(1.1);
+  }
+  65% {
+    left: 50%;
+    transform: translateX(-50%) translateY(0) scale(1);
   }
   90% {
     left: 100%;
-    transform: translateX(0) scale(1);
+    transform: translateX(0) translateY(0) scale(1);
   }
   100% {
     left: 100%;
-    transform: translateX(0) scale(1);
+    transform: translateX(0) translateY(0) scale(1);
   }
 }
 
