@@ -18,6 +18,12 @@ export type Player = {
   isHost?: boolean;
 };
 
+export type GameEvent = {
+  id: string;
+  text: string;
+  variant: "kill" | "respawn" | "killer";
+};
+
 export type Room = {
   roomId: string;
   hostId: string;
@@ -71,6 +77,10 @@ type GameState = {
   startGame: () => void;
   leaveToHome: () => void;
   clearError: () => void;
+  move: (direction: string) => void;
+  shakeTrigger: number;
+  gameEvents: GameEvent[];
+  deathMarkers: { socketId: string; pos: GridPos }[];
 };
 
 const Ctx = createContext<GameState | null>(null);
@@ -87,12 +97,33 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [room, setRoom] = useState<Room | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [shakeTrigger, setShakeTrigger] = useState(0);
+  const [gameEvents, setGameEvents] = useState<GameEvent[]>([]);
+  const gameRef = useRef<GameData | null>(game);
+  const mySocketIdRef = useRef<string | null>(mySocketId);
+  const [deathMarkers, setDeathMarkers] = useState<{ socketId: string; pos: GridPos }[]>([]);
 
   useEffect(() => {
     return () => {
       socketRef.current?.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    gameRef.current = game;
+  }, [game]);
+
+  useEffect(() => {
+    mySocketIdRef.current = mySocketId;
+  }, [mySocketId]);
+
+  function pushGameEvent(text: string, variant: GameEvent["variant"]) {
+    const id = Math.random().toString(36).slice(2);
+    setGameEvents((prev) => [...prev, { id, text, variant }]);
+    setTimeout(() => {
+      setGameEvents((prev) => prev.filter((e) => e.id !== id));
+    }, 2500); // auto-remove after 2.5s
+  }
 
   const send = useCallback((action: string, payload?: unknown) => {
     socketRef.current?.emit("message", payload ? { action, payload } : { action });
@@ -138,11 +169,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
             toast.success("Game started!");
           }
           break;
-
-
         case "YOU_ARE_KILLER":
           setIsKiller(true);
-          toast.error("You are the Killer. Stay hidden.");
+          pushGameEvent("You are the Killer", "killer");
           break;
         case "YOU_ARE_NOT_KILLER":
           setIsKiller(false);
@@ -206,9 +235,64 @@ export function GameProvider({ children }: { children: ReactNode }) {
           setScreen("home");
           toast("You were removed from the room");
           break;
+        case "PLAYER_MOVED":
+          setGame((g) =>
+            g
+              ? {
+                ...g,
+                players: g.players.map((p) =>
+                  p.socketId === payload?.socketId ? { ...p, pos: payload.pos } : p,
+                ),
+              }
+              : g,
+          );
+          break;
+        case "MOVE_REJECTED":
+          setShakeTrigger((n) => n + 1);
+          break;
         case "ERROR":
           setBusy(false);
           setError(reason ?? "Something went wrong");
+          break;
+        case "PLAYER_KILLED": {
+          const victim = gameRef.current?.players.find((p) => p.socketId === payload?.victimSocketId);
+          const victimName = victim?.name ?? "A player";
+          if (victim) {
+            setDeathMarkers((prev) => [...prev, { socketId: victim.socketId, pos: victim.pos }]);
+          }
+
+          setGame((g) => {
+            if (!g) return g;
+            return {
+              ...g,
+              players: g.players.map((p) =>
+                p.socketId === payload?.victimSocketId ? { ...p, alive: false } : p,
+              ),
+            };
+          });
+
+          if (payload?.victimSocketId === mySocketIdRef.current) {
+            pushGameEvent("You were eliminated", "kill");
+          } else {
+            pushGameEvent(`${victimName} was eliminated`, "kill");
+          }
+          break;
+        }
+        case "PLAYER_RESPAWNED":
+          setDeathMarkers((prev) => prev.filter((m) => m.socketId !== payload?.socketId));
+          setGame((g) =>
+            g
+              ? {
+                ...g,
+                players: g.players.map((p) =>
+                  p.socketId === payload?.socketId ? { ...p, pos: payload.pos, alive: true } : p,
+                ),
+              }
+              : g,
+          );
+          if (payload?.socketId === mySocketId) {
+            toast.success("Respawned!");
+          }
           break;
         default:
           if (msg?.result === "failure") {
@@ -222,7 +306,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setError(`Bad server response for ${action ?? "message"}`);
     }
   }, []);
-
 
   const setName = useCallback(
     (serverUrl: string, playerName: string) => {
@@ -272,6 +355,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       busy,
       isHost, game,
       isKiller,
+      gameEvents,
       setName,
       createRoom: () => {
         setError(null);
@@ -284,6 +368,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         send("JOIN_ROOM", { roomId });
       },
       toggleReady: () => send("TOGGLE_READY"),
+      move: (direction: string) => send("MOVE", { direction }),
       kickPlayer: (socketId: string) => send("KICK_PLAYER", { socketId }),
       startGame: () => send("START_GAME"),
       leaveToHome: () => {
@@ -292,8 +377,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setScreen("home");
       },
       clearError: () => setError(null),
+      shakeTrigger,
+      deathMarkers
+
     }),
-    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, setName, send],
+    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
