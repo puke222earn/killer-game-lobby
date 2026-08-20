@@ -200,63 +200,60 @@
   animation: knife-idle 4.5s linear infinite;
 }
 
+/* Stepped walk: position, bob and legs share one 4.5s timeline.
+   Walk in: 0% -> 35% (6 steps). Idle: 35% -> 65%. Walk out: 65% -> 100% (6 steps). */
 @keyframes runner-loop {
-  0% {
-    left: -2rem;
-    transform: translateX(0) translateY(0);
-  }
-  35% {
-    left: 50%;
-    transform: translateX(-50%) translateY(0);
-  }
-  40% {
-    left: 50%;
-    transform: translateX(-50%) translateY(-1px);
-  }
-  50% {
-    left: 50%;
-    transform: translateX(-50%) translateY(1px);
-  }
-  60% {
-    left: 50%;
-    transform: translateX(-50%) translateY(0);
-  }
-  65% {
-    left: 50%;
-    transform: translateX(-50%) translateY(0);
-  }
-  90% {
-    left: 100%;
-    transform: translateX(0) translateY(0);
-  }
-  100% {
-    left: 100%;
-    transform: translateX(0) translateY(0);
-  }
+  0% { left: -2rem; transform: translateY(0); animation-timing-function: steps(1, end); }
+  5.833% { left: calc(8.3333% - 1.6667rem); transform: translateY(-2px); animation-timing-function: steps(1, end); }
+  11.667% { left: calc(16.6667% - 1.3333rem); transform: translateY(0); animation-timing-function: steps(1, end); }
+  17.5% { left: calc(25% - 1rem); transform: translateY(-2px); animation-timing-function: steps(1, end); }
+  23.333% { left: calc(33.3333% - 0.6667rem); transform: translateY(0); animation-timing-function: steps(1, end); }
+  29.167% { left: calc(41.6667% - 0.3333rem); transform: translateY(-2px); animation-timing-function: steps(1, end); }
+  35% { left: 50%; transform: translateY(0); }
+
+  /* idle breathing while paused in the middle */
+  45% { left: 50%; transform: translateY(-1px); }
+  55% { left: 50%; transform: translateY(0); }
+  65% { left: 50%; transform: translateY(0); animation-timing-function: steps(1, end); }
+
+  70.833% { left: calc(58.3333% + 0.3333rem); transform: translateY(-2px); animation-timing-function: steps(1, end); }
+  76.667% { left: calc(66.6667% + 0.6667rem); transform: translateY(0); animation-timing-function: steps(1, end); }
+  82.5% { left: calc(75% + 1rem); transform: translateY(-2px); animation-timing-function: steps(1, end); }
+  88.333% { left: calc(83.3333% + 1.3333rem); transform: translateY(0); animation-timing-function: steps(1, end); }
+  94.167% { left: calc(91.6667% + 1.6667rem); transform: translateY(-2px); animation-timing-function: steps(1, end); }
+  100% { left: calc(100% + 2rem); transform: translateY(0); }
 }
 
 @keyframes leg-walk-left {
-  0%, 35%, 65%, 90%, 100% {
-    transform: rotate(-12deg);
-  }
-  17.5% {
-    transform: rotate(12deg);
-  }
-  77.5% {
-    transform: rotate(12deg);
-  }
+  0% { transform: rotate(-14deg); animation-timing-function: steps(1, end); }
+  5.833% { transform: rotate(-7deg); animation-timing-function: steps(1, end); }
+  11.667% { transform: rotate(7deg); animation-timing-function: steps(1, end); }
+  17.5% { transform: rotate(14deg); animation-timing-function: steps(1, end); }
+  23.333% { transform: rotate(7deg); animation-timing-function: steps(1, end); }
+  29.167% { transform: rotate(-7deg); animation-timing-function: steps(1, end); }
+  35%, 65% { transform: rotate(-6deg); animation-timing-function: steps(1, end); }
+  70.833% { transform: rotate(-7deg); animation-timing-function: steps(1, end); }
+  76.667% { transform: rotate(7deg); animation-timing-function: steps(1, end); }
+  82.5% { transform: rotate(14deg); animation-timing-function: steps(1, end); }
+  88.333% { transform: rotate(7deg); animation-timing-function: steps(1, end); }
+  94.167% { transform: rotate(-7deg); animation-timing-function: steps(1, end); }
+  100% { transform: rotate(-14deg); }
 }
 
 @keyframes leg-walk-right {
-  0%, 35%, 65%, 90%, 100% {
-    transform: rotate(12deg);
-  }
-  17.5% {
-    transform: rotate(-12deg);
-  }
-  77.5% {
-    transform: rotate(-12deg);
-  }
+  0% { transform: rotate(14deg); animation-timing-function: steps(1, end); }
+  5.833% { transform: rotate(7deg); animation-timing-function: steps(1, end); }
+  11.667% { transform: rotate(-7deg); animation-timing-function: steps(1, end); }
+  17.5% { transform: rotate(-14deg); animation-timing-function: steps(1, end); }
+  23.333% { transform: rotate(-7deg); animation-timing-function: steps(1, end); }
+  29.167% { transform: rotate(7deg); animation-timing-function: steps(1, end); }
+  35%, 65% { transform: rotate(6deg); animation-timing-function: steps(1, end); }
+  70.833% { transform: rotate(7deg); animation-timing-function: steps(1, end); }
+  76.667% { transform: rotate(-7deg); animation-timing-function: steps(1, end); }
+  82.5% { transform: rotate(-14deg); animation-timing-function: steps(1, end); }
+  88.333% { transform: rotate(-7deg); animation-timing-function: steps(1, end); }
+  94.167% { transform: rotate(7deg); animation-timing-function: steps(1, end); }
+  100% { transform: rotate(14deg); }
 }
 
 @keyframes knife-idle {
