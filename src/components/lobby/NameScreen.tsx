@@ -9,7 +9,7 @@ import { toast } from "sonner";
 export function NameScreen() {
   const { setName, goToLanding, busy, connecting, error, connectionMode } = useGame();
   const isOnline = connectionMode === "online";
-  const onlineUrl = import.meta.env.VITE_PRODUCTION_SERVER_URL ?? "";
+  const onlineUrl = import.meta.env["VITE_PRODUCTION_SERVER_URL"] ?? "";
   const [name, setNameInput] = useState("");
   const [server, setServer] = useState("ws://localhost:3001");
 
