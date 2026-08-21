@@ -28,13 +28,18 @@ export function HomeScreen() {
 
       <div className="overflow-hidden rounded-3xl bg-card ring-1 ring-border">
         <div className="grid grid-cols-1 divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
-          <div className="flex flex-col justify-center p-5">
-            <Button className="h-14 w-full text-base" disabled={busy} onClick={createRoom}>
-              <Plus className="size-5" /> Create Room
-            </Button>
-          </div>
+          <button
+            type="button"
+            onClick={createRoom}
+            disabled={busy}
+            className="group flex flex-col items-center justify-center gap-2 px-10 py-8 transition-colors hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary disabled:opacity-50"
+          >
+            <Plus className="size-6 group-hover:text-primary" />
+            <span className="text-xl font-semibold group-hover:text-primary">Create Room</span>
+            <span className="text-sm text-muted-foreground">Start a new game</span>
+          </button>
 
-          <div className="flex flex-col justify-center gap-3 p-5">
+          <div className="flex flex-col justify-center gap-3 px-10 py-8">
             <p className="text-sm font-semibold text-muted-foreground">Join with a code</p>
             <Input
               value={code}

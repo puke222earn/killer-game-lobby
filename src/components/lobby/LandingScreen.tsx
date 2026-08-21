@@ -1,6 +1,7 @@
 import { useGame } from "@/lib/game-store";
-import  Lottie  from "lottie-react";
+import Lottie from "lottie-react";
 import killerRunAnimation from "@/assets/killer-run.json";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 export function LandingScreen() {
   const { goToName } = useGame();
@@ -8,6 +9,14 @@ export function LandingScreen() {
   return (
     <div className="space-y-8">
       <div className="text-center">
+        <div className="mx-auto max-w-2xl flex justify-center">
+          <DotLottieReact
+            src="https://lottie.host/e03711a1-8829-4569-a517-1451db315b0e/Ycpq6FV69C.lottie"
+            loop
+            autoplay
+            style={{ width: "4rem", height: "4rem" }}
+          />
+        </div>
         <h1 className="text-3xl font-black tracking-tight">Killer Game</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Choose how you want to play
@@ -16,14 +25,12 @@ export function LandingScreen() {
 
       <div className="relative">
         <div className="runner-track">
-          <div className="runner">
-            {/* <Lottie
+          {/* <Lottie
               animationData={killerRunAnimation}
               loop
               autoplay
               style={{ width: "2.5rem", height: "2.5rem" }}
             /> */}
-          </div>
         </div>
 
         <div className="overflow-hidden rounded-3xl bg-card ring-1 ring-border">
