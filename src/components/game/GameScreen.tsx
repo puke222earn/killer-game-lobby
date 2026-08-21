@@ -3,6 +3,7 @@ import React from "react";
 import { Skull } from "lucide-react";
 import { avatarColor, initials, useGame, type GamePlayer } from "@/lib/game-store";
 import { GameEvent } from "@/lib/game-store";
+import { DPad } from "./DPad";
 
 
 function formatMs(ms: number) {
@@ -202,6 +203,7 @@ export function GameScreen() {
       <p className="text-center text-xs text-muted-foreground">
         {game.players.length} player{game.players.length === 1 ? "" : "s"} in the maze
       </p>
+      <DPad onMove={move} />
     </div>
   );
 }
