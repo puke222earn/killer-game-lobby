@@ -61,6 +61,8 @@ export type GameData = {
   startedAt: number;
 };
 
+export type ConnectionMode = "online" | "local";
+
 export type Screen = "landing" | "name" | "home" | "lobby" | "game" | "ended";
 
 type GameState = {
@@ -98,6 +100,7 @@ const Ctx = createContext<GameState | null>(null);
 export function GameProvider({ children }: { children: ReactNode }) {
   const [game, setGame] = useState<GameData | null>(null);
   const [isKiller, setIsKiller] = useState(false);
+  const [connectionMode, setConnectionMode] = useState<ConnectionMode>("local");
   const socketRef = useRef<Socket | null>(null);
   const [screen, setScreen] = useState<Screen>("landing");
   const [connected, setConnected] = useState(false);
@@ -381,7 +384,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setRoom(null);
         setScreen("landing");
       },
-      goToName: () => setScreen("name"),
+      connectionMode,
+      goToName: (mode: ConnectionMode = "local") => {
+        setConnectionMode(mode);
+        setScreen("name");
+      },
       setName,
       createRoom: () => {
         setError(null);
