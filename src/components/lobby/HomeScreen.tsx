@@ -22,7 +22,7 @@ export function HomeScreen() {
       <div className="text-center">
         <h1 className="text-2xl font-black tracking-tight">Hey, {name}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {connected ? "Connected" : "Disconnected"} · start a room or join one
+          start a room or join one
         </p>
       </div>
 
