@@ -202,6 +202,8 @@ export function GameScreen() {
       <p className="text-center text-xs text-muted-foreground">
         {game.players.length} player{game.players.length === 1 ? "" : "s"} in the maze
       </p>
+
+      <DPad />
     </div>
   );
 }
