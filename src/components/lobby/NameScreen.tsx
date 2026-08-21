@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Skull } from "lucide-react";
+import { ArrowLeft, Skull } from "lucide-react";
 import { useGame } from "@/lib/game-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 export function NameScreen() {
-  const { setName, busy, connecting, error } = useGame();
+  const { setName, goToLanding, busy, connecting, error } = useGame();
   const [name, setNameInput] = useState("");
   const [server, setServer] = useState("ws://localhost:3001");
 
@@ -28,6 +28,12 @@ export function NameScreen() {
 
   return (
     <form onSubmit={submit} className="space-y-6">
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" size="sm" onClick={goToLanding} disabled={busy}>
+          <ArrowLeft className="size-4" /> Back
+        </Button>
+      </div>
+
       <div className="text-center">
         <div className="mx-auto flex size-16 items-center justify-center rounded-3xl bg-primary/15 text-primary">
           <Skull className="size-8" />

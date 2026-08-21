@@ -1,19 +1,28 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { useGame } from "@/lib/game-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export function HomeScreen() {
-  const { name, createRoom, joinRoom, error, busy, connected } = useGame();
+  const { name, createRoom, joinRoom, goToLanding, error, busy, connected } = useGame();
   const [code, setCode] = useState("");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" size="sm" onClick={goToLanding} disabled={busy}>
+          <ArrowLeft className="size-4" /> Back
+        </Button>
+        <span className="text-xs text-muted-foreground">
+          {connected ? "Connected" : "Disconnected"}
+        </span>
+      </div>
+
       <div className="text-center">
         <h1 className="text-2xl font-black tracking-tight">Hey, {name}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {connected ? "Connected" : "Disconnected"} · start a room or join one
+          start a room or join one
         </p>
       </div>
 
