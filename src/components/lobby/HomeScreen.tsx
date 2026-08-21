@@ -9,7 +9,16 @@ export function HomeScreen() {
   const [code, setCode] = useState("");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" size="sm" onClick={goToLanding} disabled={busy}>
+          <ArrowLeft className="size-4" /> Back
+        </Button>
+        <span className="text-xs text-muted-foreground">
+          {connected ? "Connected" : "Disconnected"}
+        </span>
+      </div>
+
       <div className="text-center">
         <h1 className="text-2xl font-black tracking-tight">Hey, {name}</h1>
         <p className="mt-1 text-sm text-muted-foreground">

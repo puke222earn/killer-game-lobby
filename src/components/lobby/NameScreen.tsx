@@ -28,6 +28,12 @@ export function NameScreen() {
 
   return (
     <form onSubmit={submit} className="space-y-6">
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" size="sm" onClick={goToLanding} disabled={busy}>
+          <ArrowLeft className="size-4" /> Back
+        </Button>
+      </div>
+
       <div className="text-center">
         <div className="mx-auto flex size-16 items-center justify-center rounded-3xl bg-primary/15 text-primary">
           <Skull className="size-8" />
