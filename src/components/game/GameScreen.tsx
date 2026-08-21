@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
-import { Skull } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Skull } from "lucide-react";
 import { avatarColor, initials, useGame, type GamePlayer } from "@/lib/game-store";
 import { GameEvent } from "@/lib/game-store";
 
@@ -202,6 +202,8 @@ export function GameScreen() {
       <p className="text-center text-xs text-muted-foreground">
         {game.players.length} player{game.players.length === 1 ? "" : "s"} in the maze
       </p>
+
+      <DPad />
     </div>
   );
 }
