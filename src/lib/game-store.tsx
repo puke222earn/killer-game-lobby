@@ -75,8 +75,9 @@ type GameState = {
   isHost: boolean;
   game: GameData | null;
   isKiller: boolean;
+  connectionMode: ConnectionMode;
   goToLanding: () => void;
-  goToName: () => void;
+  goToName: (mode?: ConnectionMode) => void;
   setName: (serverUrl: string, name: string) => void;
   createRoom: () => void;
   joinRoom: (roomId: string) => void;
