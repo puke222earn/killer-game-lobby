@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Skull } from "lucide-react";
+import { ArrowLeft, Skull } from "lucide-react";
 import { useGame } from "@/lib/game-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 export function NameScreen() {
-  const { setName, busy, connecting, error } = useGame();
+  const { setName, goToLanding, busy, connecting, error } = useGame();
   const [name, setNameInput] = useState("");
   const [server, setServer] = useState("ws://localhost:3001");
 

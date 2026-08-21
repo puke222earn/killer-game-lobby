@@ -75,6 +75,7 @@ type GameState = {
   isHost: boolean;
   game: GameData | null;
   isKiller: boolean;
+  goToLanding: () => void;
   goToName: () => void;
   setName: (serverUrl: string, name: string) => void;
   createRoom: () => void;
@@ -369,6 +370,16 @@ export function GameProvider({ children }: { children: ReactNode }) {
       isHost, game,
       isKiller,
       gameEvents,
+      goToLanding: () => {
+        socketRef.current?.disconnect();
+        socketRef.current = null;
+        setConnected(false);
+        setConnecting(false);
+        setBusy(false);
+        setError(null);
+        setRoom(null);
+        setScreen("landing");
+      },
       goToName: () => setScreen("name"),
       setName,
       createRoom: () => {

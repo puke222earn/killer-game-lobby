@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { useGame } from "@/lib/game-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export function HomeScreen() {
-  const { name, createRoom, joinRoom, error, busy, connected } = useGame();
+  const { name, createRoom, joinRoom, goToLanding, error, busy, connected } = useGame();
   const [code, setCode] = useState("");
 
   return (
