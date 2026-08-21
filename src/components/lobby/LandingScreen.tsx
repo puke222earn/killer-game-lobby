@@ -28,14 +28,18 @@ export function LandingScreen() {
 
         <div className="overflow-hidden rounded-3xl bg-card ring-1 ring-border">
           <div className="grid grid-cols-2 divide-x divide-border">
-            <div className="flex flex-col items-center justify-center gap-2 p-6 opacity-50 grayscale">
-              <span className="text-sm font-semibold">Play Online</span>
-              <span className="text-xs text-muted-foreground">Coming soon</span>
-            </div>
+            <button
+              type="button"
+              onClick={() => goToName("online")}
+              className="group flex flex-col items-center justify-center gap-1 p-6 transition-colors hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+            >
+              <span className="text-sm font-semibold group-hover:text-primary">Play Online</span>
+              <span className="text-xs text-muted-foreground">Public server</span>
+            </button>
 
             <button
               type="button"
-              onClick={goToName}
+              onClick={() => goToName("local")}
               className="group flex flex-col items-center justify-center gap-1 p-6 transition-colors hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
             >
               <span className="text-sm font-semibold group-hover:text-primary">Play Locally</span>

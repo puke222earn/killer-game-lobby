@@ -7,7 +7,9 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 export function NameScreen() {
-  const { setName, goToLanding, busy, connecting, error } = useGame();
+  const { setName, goToLanding, busy, connecting, error, connectionMode } = useGame();
+  const isOnline = connectionMode === "online";
+  const onlineUrl = import.meta.env["VITE_PRODUCTION_SERVER_URL"] ?? "";
   const [name, setNameInput] = useState("");
   const [server, setServer] = useState("ws://localhost:3001");
 
@@ -22,6 +24,10 @@ export function NameScreen() {
     e.preventDefault();
     if (!name.trim()) return;
     localStorage.setItem("playerName", name.trim());
+    if (isOnline) {
+      setName(onlineUrl, name.trim());
+      return;
+    }
     localStorage.setItem("serverUrl", server.trim());
     setName(server, name.trim());
   };
@@ -55,6 +61,7 @@ export function NameScreen() {
             className="h-12 text-base"
           />
         </div>
+        {!isOnline && (
         <div className="space-y-2">
           <Label htmlFor="server">Server address</Label>
           <Input
@@ -66,6 +73,7 @@ export function NameScreen() {
             className="h-12 font-mono text-sm"
           />
         </div>
+        )}
         {error && <p className="text-sm font-medium text-destructive">{error}</p>}
         <Button type="submit" className="h-12 w-full text-base" disabled={!name.trim() || busy}>
           {connecting ? "Connecting…" : busy ? "Please wait…" : "Continue"}
