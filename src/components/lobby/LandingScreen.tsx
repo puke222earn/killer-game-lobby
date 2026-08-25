@@ -29,8 +29,6 @@ export function LandingScreen() {
             <span className="font-semibold text-foreground">{online} online</span>
             <span className="opacity-60">·</span>
             <span>{totalVisits} visitors since launch</span>
-            <span className="opacity-60">·</span>
-            <span className="hover:text-foreground transition-colors">see stats →</span>
           </div>
         </div>
 

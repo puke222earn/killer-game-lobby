@@ -6,23 +6,32 @@ type Direction = "up" | "down" | "left" | "right";
 export function DPad({ onMove }: { onMove: (direction: Direction) => void }) {
   const intervalRef = useRef<number | null>(null);
 
+  const timeoutRef = useRef<number | null>(null);
+
   const startMoving = useCallback(
     (direction: Direction) => {
-      onMove(direction); // fire immediately on press, don't wait for the interval
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      intervalRef.current = window.setInterval(() => {
-        onMove(direction);
-      }, 150); // matches the server's move cooldown
+      onMove(direction); // immediate move on press
+
+      timeoutRef.current = window.setTimeout(() => {
+        intervalRef.current = window.setInterval(() => {
+          onMove(direction);
+        }, 150);
+      }, 300); // hold-to-repeat only kicks in after 300ms of holding
     },
     [onMove],
   );
 
   const stopMoving = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
   }, []);
+
 
   const buttonClass =
     "flex size-12 items-center justify-center rounded-xl bg-card/80 text-foreground ring-1 ring-border backdrop-blur-sm active:bg-primary/20 select-none touch-none";

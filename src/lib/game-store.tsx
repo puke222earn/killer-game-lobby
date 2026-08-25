@@ -61,6 +61,12 @@ export type GameData = {
   startedAt: number;
 };
 
+export type RematchStatus = {
+  votedCount: number;
+  totalCount: number;
+  hostId: string;
+};
+
 export type ConnectionMode = "online" | "local";
 
 export type Screen = "landing" | "name" | "home" | "lobby" | "game" | "ended";
@@ -83,6 +89,7 @@ type GameState = {
   setName: (serverUrl: string, name: string) => void;
   createRoom: () => void;
   joinRoom: (roomId: string) => void;
+  playAgain: () => void;
   toggleReady: () => void;
   kickPlayer: (socketId: string) => void;
   startGame: () => void;
@@ -93,6 +100,8 @@ type GameState = {
   gameEvents: GameEvent[];
   deathMarkers: { socketId: string; pos: GridPos }[];
   standings: Standing[];
+  rematchStatus: RematchStatus | null;
+  rematchDeadline: number | null;
 };
 
 const Ctx = createContext<GameState | null>(null);
@@ -116,6 +125,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const mySocketIdRef = useRef<string | null>(mySocketId);
   const [deathMarkers, setDeathMarkers] = useState<{ socketId: string; pos: GridPos }[]>([]);
   const [standings, setStandings] = useState<Standing[]>([]);
+  const [rematchStatus, setRematchStatus] = useState<RematchStatus | null>(null);
+  const [rematchDeadline, setRematchDeadline] = useState<number | null>(null);
 
   useEffect(() => {
     return () => {
@@ -136,7 +147,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setGameEvents((prev) => [...prev, { id, text, variant }]);
     setTimeout(() => {
       setGameEvents((prev) => prev.filter((e) => e.id !== id));
-    }, 2500); // auto-remove after 2.5s
+    }, 1500); // auto-remove after 2.5s
   }
 
   const send = useCallback((action: string, payload?: unknown) => {
@@ -156,6 +167,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
           setScreen("home");
           if (payload?.socketId) setMySocketId(payload.socketId);
           break;
+        case "ROOM_RESET": {
+          const roomData = payload.room ?? payload;
+          setRoom({
+            roomId: roomData.roomId,
+            hostId: roomData.hostId,
+            status: roomData.status,
+            players: Array.isArray(roomData.players) ? roomData.players : [],
+          });
+          setGame(null);
+          setIsKiller(false);
+          setStandings([]);
+          setRematchStatus(null);
+          setRematchDeadline(null);
+          setScreen("lobby");
+          break;
+        }
         case "ROOM_CREATED": {
           setBusy(false);
           setError(null);
@@ -170,6 +197,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
           setScreen("lobby");
           break;
         }
+        case "GAME_ENDED":
+          setStandings(payload?.standings ?? []);
+          setRematchDeadline(payload?.rematchDeadline ?? null);
+          setRematchStatus(null); // reset — nobody's voted yet
+          setScreen("ended");
+          break;
+        case "REMATCH_UPDATE":
+          setRematchStatus({
+            votedCount: payload.votedCount,
+            totalCount: payload.totalCount,
+            hostId: payload.hostId,
+          });
+          break;
         case "GAME_STARTED":
           if (Array.isArray(payload?.grid)) {
             setGame({
@@ -205,10 +245,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
           setScreen("lobby");
           break;
         }
-        case "GAME_ENDED":
-          setStandings(Array.isArray(payload?.standings) ? payload.standings : []);
-          setScreen("ended");
-          break;
         case "PLAYER_JOINED":
           setRoom((r) =>
             r && payload?.player
@@ -400,6 +436,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setBusy(true);
         send("JOIN_ROOM", { roomId });
       },
+      playAgain: () => send("PLAY_AGAIN"),
       toggleReady: () => send("TOGGLE_READY"),
       move: (direction: string) => send("MOVE", { direction }),
       kickPlayer: (socketId: string) => send("KICK_PLAYER", { socketId }),
@@ -412,9 +449,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
       clearError: () => setError(null),
       shakeTrigger,
       deathMarkers,
-      standings
+      standings,
+      rematchStatus,
+      rematchDeadline
     }),
-    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers, standings],
+    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers, standings, rematchStatus, rematchDeadline],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

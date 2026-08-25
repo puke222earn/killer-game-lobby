@@ -15,7 +15,7 @@ export function useSiteStats() {
     if (!hasFiredVisit.current) {
       hasFiredVisit.current = true;
 
-      fetch(VISIT_URL).catch(() => {}); // fire-and-forget, registers this page load
+      fetch(VISIT_URL).catch(() => { }); // fire-and-forget, registers this page load
     }
 
     const fetchStats = () => {
