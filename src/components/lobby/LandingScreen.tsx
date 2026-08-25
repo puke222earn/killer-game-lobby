@@ -30,7 +30,26 @@ export function LandingScreen() {
         <p className="mt-1 text-sm text-muted-foreground">
           Choose how you want to play
         </p>
+
+        {online !== null && totalVisits !== null && (
+          <div
+            className={`mt-4 inline-flex items-center gap-2 rounded-full bg-muted/40 px-4 py-1.5 text-sm text-muted-foreground transition-opacity duration-500 ${
+              showStats ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-green-500" />
+            </span>
+            <span className="font-semibold text-foreground">{online} online</span>
+            <span className="opacity-60">·</span>
+            <span>{totalVisits} visitors since launch</span>
+            <span className="opacity-60">·</span>
+            <span className="hover:text-foreground transition-colors">see stats →</span>
+          </div>
+        )}
       </div>
+
 
       <div className="relative">
         <div className="runner-track">
