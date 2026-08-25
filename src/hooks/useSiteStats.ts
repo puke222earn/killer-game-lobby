@@ -5,9 +5,9 @@ const STATS_URL = "https://kill-your-friend.duckdns.org/api/stats";
 const VISIT_URL = "https://kill-your-friend.duckdns.org/api/visit";
 
 export function useSiteStats() {
-  const [online, setOnline] = useState<number | null>(null);
+  const [online, setOnline] = useState<number>(0);
 
-  const [totalVisits, setTotalVisits] = useState<number | null>(null);
+  const [totalVisits, setTotalVisits] = useState<number>(0);
 
   const hasFiredVisit = useRef(false);
 
@@ -22,11 +22,14 @@ export function useSiteStats() {
       fetch(STATS_URL)
         .then((res) => res.json())
         .then((data) => {
-          setOnline(data.online);
+          setOnline(Number(data?.online) || 0);
 
-          setTotalVisits(data.totalVisits);
+          setTotalVisits(Number(data?.totalVisits) || 0);
         })
-        .catch(() => {});
+        .catch(() => {
+          setOnline(0);
+          setTotalVisits(0);
+        });
     };
 
     fetchStats();
@@ -38,3 +41,4 @@ export function useSiteStats() {
 
   return { online, totalVisits };
 }
+
