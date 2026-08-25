@@ -1,10 +1,19 @@
+import { useEffect, useState } from "react";
 import { useGame } from "@/lib/game-store";
-import Lottie from "lottie-react";
-import killerRunAnimation from "@/assets/killer-run.json";
+import { useSiteStats } from "@/hooks/useSiteStats";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 export function LandingScreen() {
   const { goToName } = useGame();
+  const { online, totalVisits } = useSiteStats();
+  const [showStats, setShowStats] = useState(false);
+
+  useEffect(() => {
+    if (online !== null && totalVisits !== null) {
+      setShowStats(true);
+    }
+  }, [online, totalVisits]);
+
 
   return (
     <div className="space-y-8">
