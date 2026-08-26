@@ -4,6 +4,8 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Skull } from "lucide-react";
 import { avatarColor, initials, useGame, type GamePlayer } from "@/lib/game-store";
 import { GameEvent } from "@/lib/game-store";
 import { DPad } from "./DPad";
+import { ChatPanel } from "@/components/chat/ChatPanel";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 function formatMs(ms: number) {
@@ -17,6 +19,7 @@ function formatMs(ms: number) {
 
 export function GameScreen() {
   const { game, mySocketId, isKiller, move, shakeTrigger, gameEvents, deathMarkers } = useGame();
+  const isMobile = useIsMobile();
   const [isShaking, setIsShaking] = useState(false);
   const [now, setNow] = useState(Date.now());
 
@@ -209,7 +212,7 @@ export function GameScreen() {
 
       <ChatPanel
         className="w-full lg:h-[32rem] lg:w-80 lg:shrink-0"
-        collapsible={typeof window !== "undefined" && window.innerWidth < 1024}
+        collapsible={isMobile}
       />
     </div>
   );
