@@ -67,6 +67,12 @@ export type RematchStatus = {
   hostId: string;
 };
 
+export type ChatMessage = {
+  socketId: string;
+  text: string;
+  timestamp: number;
+};
+
 export type ConnectionMode = "online" | "local";
 
 export type Screen = "landing" | "name" | "home" | "lobby" | "game" | "ended";
