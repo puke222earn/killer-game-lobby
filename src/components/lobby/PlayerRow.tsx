@@ -16,7 +16,7 @@ export function PlayerRow({
   onKick: () => void;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-card px-3 py-3 ring-1 ring-border">
+    <div className="flex items-center gap-3 rounded-[1rem] bg-card px-3 py-3 ring-1 ring-border">
       <div
         className="flex size-11 shrink-0 items-center justify-center rounded-full text-sm font-bold text-background"
         style={{ backgroundColor: avatarColor(player.socketId || player.name) }}

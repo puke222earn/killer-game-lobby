@@ -40,7 +40,7 @@ export function ChatPanel({
   }
 
   return (
-    <div className={`flex min-h-0 flex-col rounded-3xl bg-card ring-1 ring-border ${className}`}>
+    <div className={`flex min-h-0 flex-col rounded-[1rem] bg-card ring-1 ring-border ${className}`}>
       <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
         <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           <MessageSquare className="size-3.5" /> Chat
@@ -81,11 +81,10 @@ export function ChatPanel({
                   {isMe ? "You" : displayName}
                 </p>
                 <p
-                  className={`mt-0.5 inline-block break-words rounded-2xl px-3 py-1.5 text-sm ${
-                    isMe
-                      ? "bg-primary/20 text-foreground ring-1 ring-primary/30"
-                      : "bg-muted/60 text-foreground ring-1 ring-border"
-                  }`}
+                  className={`mt-0.5 inline-block break-words rounded-2xl px-3 py-1.5 text-sm ${isMe
+                    ? "bg-primary/20 text-foreground ring-1 ring-primary/30"
+                    : "bg-muted/60 text-foreground ring-1 ring-border"
+                    }`}
                 >
                   {m.text}
                 </p>
@@ -107,9 +106,9 @@ export function ChatPanel({
             }
           }}
           placeholder="Say something…"
-          className="h-9 min-w-0 flex-1 rounded-xl bg-input/60 px-3 text-sm text-foreground outline-none ring-1 ring-border placeholder:text-muted-foreground focus:ring-primary/50"
+          className="h-9 min-w-0 flex-1 rounded-[.5rem] bg-input/60 px-3 text-sm text-foreground outline-none ring-1 ring-border placeholder:text-muted-foreground focus:ring-primary/50"
         />
-        <Button size="icon" className="size-9 shrink-0" onClick={handleSend} disabled={!draft.trim()}>
+        <Button size="icon" className="rounded-[.5rem] size-9 shrink-0" onClick={handleSend} disabled={!draft.trim()}>
           <Send className="size-4" />
         </Button>
       </div>

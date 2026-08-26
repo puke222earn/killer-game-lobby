@@ -15,7 +15,7 @@ export function LobbyScreen() {
   const allReady = others.length > 0 && others.every((p) => p.ready);
 
   return (
-    <div className="mx-auto flex justify-center w-full max-w-4xl flex-col gap-4 md:flex-row md:items-stretch">
+    <div className="mx-auto relative h-[21rem] flex justify-center w-full max-w-4xl flex-col gap-4 md:flex-row md:items-stretch">
       {/* LEFT: room info, player list, action button */}
       <div className="flex w-full min-w-0 max-w-md flex-col gap-5">
         <div className="flex items-center justify-between">
@@ -27,7 +27,7 @@ export function LobbyScreen() {
           </span>
         </div>
 
-        <div className="rounded-3xl bg-primary/10 p-6 text-center ring-1 ring-primary/30">
+        <div className="rounded-[1rem] bg-primary/10 p-6 text-center ring-1 ring-primary/30">
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             Room code
           </p>
@@ -67,7 +67,7 @@ export function LobbyScreen() {
       </div>
 
       {/* RIGHT: chat */}
-      <ChatPanel className="h-64 w-full md:max-h-[36rem] md:w-80 md:shrink-0" />
+      <ChatPanel className=" w-full md:w-80 md:shrink-0" />
     </div>
   );
 }
