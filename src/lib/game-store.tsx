@@ -135,6 +135,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [standings, setStandings] = useState<Standing[]>([]);
   const [rematchStatus, setRematchStatus] = useState<RematchStatus | null>(null);
   const [rematchDeadline, setRematchDeadline] = useState<number | null>(null);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
   useEffect(() => {
     return () => {
