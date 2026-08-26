@@ -15,7 +15,7 @@ export function LobbyScreen() {
   const allReady = others.length > 0 && others.every((p) => p.ready);
 
   return (
-    <div className="mx-auto relative h-[21rem] flex justify-center w-full max-w-4xl flex-col gap-4 md:flex-row md:items-stretch">
+    <div className="mx-auto relative flex justify-center w-full max-w-4xl flex-col gap-4 md:flex-row md:items-stretch ">
       {/* LEFT: room info, player list, action button */}
       <div className="flex w-full min-w-0 max-w-md flex-col gap-5">
         <div className="flex items-center justify-between">

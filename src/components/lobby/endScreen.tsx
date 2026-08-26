@@ -2,11 +2,13 @@ import { useEffect, useState, useRef } from "react";
 import { Trophy, Skull, Home, RotateCcw } from "lucide-react";
 import { avatarColor, initials, useGame } from "@/lib/game-store";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export function EndScreen() {
   const { standings, mySocketId, leaveToHome, playAgain, rematchStatus, rematchDeadline } = useGame();
   const [hasVoted, setHasVoted] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(15);
+  const prevVotedCountRef = useRef(0);
 
   const leaveToHomeRef = useRef(leaveToHome);
   useEffect(() => {
@@ -29,6 +31,16 @@ export function EndScreen() {
     const interval = setInterval(tick, 500);
     return () => clearInterval(interval);
   }, [rematchDeadline, hasVoted]);
+
+  useEffect(() => {
+    if (!rematchStatus) return;
+    const { votedCount, totalCount } = rematchStatus;
+
+    if (votedCount > prevVotedCountRef.current && !hasVoted) {
+      toast(`${votedCount} of ${totalCount} players agreed to play again`);
+    }
+    prevVotedCountRef.current = votedCount;
+  }, [rematchStatus, hasVoted]);
 
   const handlePlayAgain = () => {
     playAgain();
@@ -119,6 +131,7 @@ export function EndScreen() {
           onClick={handlePlayAgain}
           disabled={hasVoted}
         >
+          {rematchStatus?.votedCount}
           <RotateCcw className="size-4" /> {hasVoted ? "Waiting for others…" : "Play Again"}
         </Button>
       </div>
