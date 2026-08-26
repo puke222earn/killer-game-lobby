@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { useGame } from "@/lib/game-store";
 import { Button } from "@/components/ui/button";
 import { PlayerRow } from "@/components/lobby/PlayerRow";
+import { ChatPanel } from "@/components/chat/ChatPanel";
 import { toast } from "sonner";
 
 export function LobbyScreen() {
