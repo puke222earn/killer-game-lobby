@@ -108,6 +108,8 @@ type GameState = {
   standings: Standing[];
   rematchStatus: RematchStatus | null;
   rematchDeadline: number | null;
+  chatMessages: ChatMessage[];
+  sendChatMessage: (text: string) => void;
 };
 
 const Ctx = createContext<GameState | null>(null);
