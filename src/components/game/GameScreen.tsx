@@ -204,7 +204,13 @@ export function GameScreen() {
       <p className="text-center text-xs text-muted-foreground">
         {game.players.length} player{game.players.length === 1 ? "" : "s"} in the maze
       </p>
-      <DPad onMove={move} />
+        <DPad onMove={move} />
+      </div>
+
+      <ChatPanel
+        className="w-full lg:h-[32rem] lg:w-80 lg:shrink-0"
+        collapsible={typeof window !== "undefined" && window.innerWidth < 1024}
+      />
     </div>
   );
 }
