@@ -176,6 +176,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
           setScreen("home");
           if (payload?.socketId) setMySocketId(payload.socketId);
           break;
+        case "CHAT_MESSAGE": {
+          const text = String(payload?.text ?? "");
+          if (!text) break;
+          setChatMessages((prev) => [
+            ...prev,
+            {
+              socketId: String(payload?.socketId ?? ""),
+              text,
+              timestamp: Number(payload?.timestamp ?? Date.now()),
+            },
+          ]);
+          break;
+        }
         case "ROOM_RESET": {
           const roomData = payload.room ?? payload;
           setRoom({
