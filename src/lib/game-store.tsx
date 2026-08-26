@@ -460,9 +460,15 @@ export function GameProvider({ children }: { children: ReactNode }) {
       deathMarkers,
       standings,
       rematchStatus,
-      rematchDeadline
+      rematchDeadline,
+      chatMessages,
+      sendChatMessage: (text: string) => {
+        const trimmed = text.trim().slice(0, 200);
+        if (!trimmed) return;
+        send("CHAT_MESSAGE", { text: trimmed });
+      },
     }),
-    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers, standings, rematchStatus, rematchDeadline],
+    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers, standings, rematchStatus, rematchDeadline, chatMessages],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
