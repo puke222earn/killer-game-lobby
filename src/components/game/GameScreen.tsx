@@ -137,7 +137,8 @@ export function GameScreen() {
   });
 
   return (
-    <div className="mx-auto flex w-full max-w-md sm:max-w-2xl flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-md flex-col gap-4 sm:max-w-2xl lg:max-w-5xl lg:flex-row lg:items-start">
+      <div className="flex w-full min-w-0 flex-col gap-4">
       <div className="flex items-center justify-between rounded-3xl bg-card px-5 py-4 ring-1 ring-border">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
