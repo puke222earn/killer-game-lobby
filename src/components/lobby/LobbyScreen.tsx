@@ -49,6 +49,8 @@ export function LobbyScreen() {
         ))}
       </div>
 
+      <ChatPanel className="h-64" />
+
       {error && <p className="text-center text-sm font-medium text-destructive">{error}</p>}
 
       {isHost ? (
