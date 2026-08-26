@@ -33,12 +33,10 @@ export function NameScreen() {
   };
 
   return (
-    <form onSubmit={submit} className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={goToLanding} disabled={busy}>
-          <ArrowLeft className="size-4" /> Back
-        </Button>
-      </div>
+    <form onSubmit={submit} className="mx-auto w-full max-w-md space-y-6">
+      <Button variant="ghost" size="sm" onClick={goToLanding} disabled={busy}>
+        <ArrowLeft className="size-4" /> Back
+      </Button>
 
       <div className="text-center">
         <div className="mx-auto flex size-16 items-center justify-center rounded-3xl bg-primary/15 text-primary">
@@ -62,17 +60,17 @@ export function NameScreen() {
           />
         </div>
         {!isOnline && (
-        <div className="space-y-2">
-          <Label htmlFor="server">Server address</Label>
-          <Input
-            id="server"
-            value={server}
-            spellCheck={false}
-            autoCapitalize="none"
-            onChange={(e) => setServer(e.target.value)}
-            className="h-12 font-mono text-sm"
-          />
-        </div>
+          <div className="space-y-2">
+            <Label htmlFor="server">Server address</Label>
+            <Input
+              id="server"
+              value={server}
+              spellCheck={false}
+              autoCapitalize="none"
+              onChange={(e) => setServer(e.target.value)}
+              className="h-12 font-mono text-sm"
+            />
+          </div>
         )}
         {error && <p className="text-sm font-medium text-destructive">{error}</p>}
         <Button type="submit" className="h-12 w-full text-base" disabled={!name.trim() || busy}>

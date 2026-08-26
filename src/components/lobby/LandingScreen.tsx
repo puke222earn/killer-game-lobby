@@ -14,7 +14,7 @@ export function LandingScreen() {
 
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto w-full max-w-md space-y-8 ">
       <div className="text-center">
         <div
           className={`flex justify-center transition-opacity duration-500 ${

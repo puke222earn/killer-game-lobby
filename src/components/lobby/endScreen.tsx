@@ -39,7 +39,7 @@ export function EndScreen() {
   const rest = standings.slice(1);
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-6">
+    <div className="mx-auto w-full max-w-md space-y-8">
       <div className="text-center">
         <div className="mx-auto flex size-16 items-center justify-center rounded-3xl bg-primary/15 text-primary">
           <Trophy className="size-8" />

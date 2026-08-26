@@ -9,7 +9,7 @@ export function HomeScreen() {
   const [code, setCode] = useState("");
 
   return (
-    <div className="space-y-5">
+    <div className="mx-auto w-full max-w-md space-y-8">
       <div className="flex items-center justify-between">
         <Button variant="ghost" size="sm" onClick={goToLanding} disabled={busy}>
           <ArrowLeft className="size-4" /> Back

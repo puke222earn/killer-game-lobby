@@ -31,14 +31,13 @@ export const Route = createFileRoute("/")({
 function Screens() {
   const { screen } = useGame();
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-5 py-8">
+    <main className="mx-auto flex min-h-screen w-full flex-col justify-center px-5 py-8">
       {screen === "landing" && <LandingScreen />}
       {screen === "name" && <NameScreen />}
       {screen === "home" && <HomeScreen />}
       {screen === "lobby" && <LobbyScreen />}
       {screen === "game" && <GameScreen />}
       {screen === "ended" && <EndScreen />}
-
     </main>
   );
 }
