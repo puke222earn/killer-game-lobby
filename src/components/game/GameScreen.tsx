@@ -4,6 +4,8 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Skull } from "lucide-react";
 import { avatarColor, initials, useGame, type GamePlayer } from "@/lib/game-store";
 import { GameEvent } from "@/lib/game-store";
 import { DPad } from "./DPad";
+import { ChatPanel } from "@/components/chat/ChatPanel";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 function formatMs(ms: number) {
@@ -17,6 +19,7 @@ function formatMs(ms: number) {
 
 export function GameScreen() {
   const { game, mySocketId, isKiller, move, shakeTrigger, gameEvents, deathMarkers } = useGame();
+  const isMobile = useIsMobile();
   const [isShaking, setIsShaking] = useState(false);
   const [now, setNow] = useState(Date.now());
 
@@ -137,7 +140,8 @@ export function GameScreen() {
   });
 
   return (
-    <div className="mx-auto flex w-full max-w-md sm:max-w-2xl flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-md flex-col gap-4 sm:max-w-2xl lg:max-w-5xl lg:flex-row lg:items-start">
+      <div className="flex w-full min-w-0 flex-col gap-4">
       <div className="flex items-center justify-between rounded-3xl bg-card px-5 py-4 ring-1 ring-border">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -203,7 +207,13 @@ export function GameScreen() {
       <p className="text-center text-xs text-muted-foreground">
         {game.players.length} player{game.players.length === 1 ? "" : "s"} in the maze
       </p>
-      <DPad onMove={move} />
+        <DPad onMove={move} />
+      </div>
+
+      <ChatPanel
+        className="w-full lg:h-[32rem] lg:w-80 lg:shrink-0"
+        collapsible={isMobile}
+      />
     </div>
   );
 }

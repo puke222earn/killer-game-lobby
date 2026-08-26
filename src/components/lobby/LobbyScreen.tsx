@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { useGame } from "@/lib/game-store";
 import { Button } from "@/components/ui/button";
 import { PlayerRow } from "@/components/lobby/PlayerRow";
+import { ChatPanel } from "@/components/chat/ChatPanel";
 import { toast } from "sonner";
 
 export function LobbyScreen() {
@@ -47,6 +48,8 @@ export function LobbyScreen() {
           />
         ))}
       </div>
+
+      <ChatPanel className="h-64" />
 
       {error && <p className="text-center text-sm font-medium text-destructive">{error}</p>}
 

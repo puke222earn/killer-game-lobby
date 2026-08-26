@@ -67,6 +67,12 @@ export type RematchStatus = {
   hostId: string;
 };
 
+export type ChatMessage = {
+  socketId: string;
+  text: string;
+  timestamp: number;
+};
+
 export type ConnectionMode = "online" | "local";
 
 export type Screen = "landing" | "name" | "home" | "lobby" | "game" | "ended";
@@ -102,6 +108,8 @@ type GameState = {
   standings: Standing[];
   rematchStatus: RematchStatus | null;
   rematchDeadline: number | null;
+  chatMessages: ChatMessage[];
+  sendChatMessage: (text: string) => void;
 };
 
 const Ctx = createContext<GameState | null>(null);
@@ -127,6 +135,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [standings, setStandings] = useState<Standing[]>([]);
   const [rematchStatus, setRematchStatus] = useState<RematchStatus | null>(null);
   const [rematchDeadline, setRematchDeadline] = useState<number | null>(null);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
   useEffect(() => {
     return () => {
@@ -167,6 +176,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
           setScreen("home");
           if (payload?.socketId) setMySocketId(payload.socketId);
           break;
+        case "CHAT_MESSAGE": {
+          const text = String(payload?.text ?? "");
+          if (!text) break;
+          setChatMessages((prev) => [
+            ...prev,
+            {
+              socketId: String(payload?.socketId ?? ""),
+              text,
+              timestamp: Number(payload?.timestamp ?? Date.now()),
+            },
+          ]);
+          break;
+        }
         case "ROOM_RESET": {
           const roomData = payload.room ?? payload;
           setRoom({
@@ -451,9 +473,15 @@ export function GameProvider({ children }: { children: ReactNode }) {
       deathMarkers,
       standings,
       rematchStatus,
-      rematchDeadline
+      rematchDeadline,
+      chatMessages,
+      sendChatMessage: (text: string) => {
+        const trimmed = text.trim().slice(0, 200);
+        if (!trimmed) return;
+        send("CHAT_MESSAGE", { text: trimmed });
+      },
     }),
-    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers, standings, rematchStatus, rematchDeadline],
+    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers, standings, rematchStatus, rematchDeadline, chatMessages],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
