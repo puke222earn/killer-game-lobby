@@ -137,6 +137,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [rematchStatus, setRematchStatus] = useState<RematchStatus | null>(null);
   const [rematchDeadline, setRematchDeadline] = useState<number | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [latencyMs, setLatencyMs] = useState<number | null>(null);
+  const pingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     return () => {
