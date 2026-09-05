@@ -172,11 +172,14 @@ export function GameScreen() {
             {formatMs(remainingMs)}
           </p>
         </div>
-        {isKiller && (
-          <div className="rounded-full bg-destructive/15 p-2 text-destructive ring-1 ring-destructive/30">
-            <Skull className="size-5" />
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          <PingBadge latencyMs={latencyMs} />
+          {isKiller && (
+            <div className="rounded-full bg-destructive/15 p-2 text-destructive ring-1 ring-destructive/30">
+              <Skull className="size-5" />
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="relative">
