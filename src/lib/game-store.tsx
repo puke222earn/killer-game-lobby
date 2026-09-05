@@ -457,11 +457,16 @@ export function GameProvider({ children }: { children: ReactNode }) {
       goToLanding: () => {
         socketRef.current?.disconnect();
         socketRef.current = null;
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+          pingIntervalRef.current = null;
+        }
         setConnected(false);
         setConnecting(false);
         setBusy(false);
         setError(null);
         setRoom(null);
+        setLatencyMs(null);
         setScreen("landing");
       },
       connectionMode,
