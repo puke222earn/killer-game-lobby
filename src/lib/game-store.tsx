@@ -192,6 +192,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
           ]);
           break;
         }
+        case "PONG": {
+          const sentAt = Number(payload?.clientTimestamp ?? 0);
+          if (sentAt > 0) {
+            setLatencyMs(Date.now() - sentAt);
+          }
+          break;
+        }
         case "ROOM_RESET": {
           const roomData = payload.room ?? payload;
           setRoom({
