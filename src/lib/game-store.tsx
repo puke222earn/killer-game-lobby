@@ -110,6 +110,7 @@ type GameState = {
   rematchDeadline: number | null;
   chatMessages: ChatMessage[];
   sendChatMessage: (text: string) => void;
+  latencyMs: number | null;
 };
 
 const Ctx = createContext<GameState | null>(null);
@@ -136,6 +137,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [rematchStatus, setRematchStatus] = useState<RematchStatus | null>(null);
   const [rematchDeadline, setRematchDeadline] = useState<number | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [latencyMs, setLatencyMs] = useState<number | null>(null);
+  const pingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     return () => {
@@ -187,6 +190,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
               timestamp: Number(payload?.timestamp ?? Date.now()),
             },
           ]);
+          break;
+        }
+        case "PONG": {
+          const sentAt = Number(payload?.clientTimestamp ?? 0);
+          if (sentAt > 0) {
+            setLatencyMs(Date.now() - sentAt);
+          }
           break;
         }
         case "ROOM_RESET": {
@@ -405,8 +415,20 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setConnecting(false);
         setMySocketId(socket.id ?? null);
         socket.emit("message", { action: "SET_NAME", payload: { name: playerName } });
+
+        if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
+        pingIntervalRef.current = setInterval(() => {
+          socket.emit("message", { action: "PING", payload: { clientTimestamp: Date.now() } });
+        }, 2000);
       });
-      socket.on("disconnect", () => setConnected(false));
+      socket.on("disconnect", () => {
+        setConnected(false);
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+          pingIntervalRef.current = null;
+        }
+        setLatencyMs(null);
+      });
       socket.on("connect_error", (err) => {
         setConnecting(false);
         setBusy(false);
@@ -435,11 +457,16 @@ export function GameProvider({ children }: { children: ReactNode }) {
       goToLanding: () => {
         socketRef.current?.disconnect();
         socketRef.current = null;
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+          pingIntervalRef.current = null;
+        }
         setConnected(false);
         setConnecting(false);
         setBusy(false);
         setError(null);
         setRoom(null);
+        setLatencyMs(null);
         setScreen("landing");
       },
       connectionMode,
@@ -480,8 +507,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
         if (!trimmed) return;
         send("SEND_CHAT", { text: trimmed });
       },
+      latencyMs,
     }),
-    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers, standings, rematchStatus, rematchDeadline, chatMessages],
+    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers, standings, rematchStatus, rematchDeadline, chatMessages, latencyMs],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
