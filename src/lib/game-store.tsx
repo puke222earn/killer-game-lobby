@@ -110,6 +110,7 @@ type GameState = {
   rematchDeadline: number | null;
   chatMessages: ChatMessage[];
   sendChatMessage: (text: string) => void;
+  latencyMs: number | null;
 };
 
 const Ctx = createContext<GameState | null>(null);
