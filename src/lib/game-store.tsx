@@ -415,8 +415,20 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setConnecting(false);
         setMySocketId(socket.id ?? null);
         socket.emit("message", { action: "SET_NAME", payload: { name: playerName } });
+
+        if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
+        pingIntervalRef.current = setInterval(() => {
+          socket.emit("message", { action: "PING", payload: { clientTimestamp: Date.now() } });
+        }, 2000);
       });
-      socket.on("disconnect", () => setConnected(false));
+      socket.on("disconnect", () => {
+        setConnected(false);
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+          pingIntervalRef.current = null;
+        }
+        setLatencyMs(null);
+      });
       socket.on("connect_error", (err) => {
         setConnecting(false);
         setBusy(false);
