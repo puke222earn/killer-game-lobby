@@ -507,8 +507,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
         if (!trimmed) return;
         send("SEND_CHAT", { text: trimmed });
       },
+      latencyMs,
     }),
-    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers, standings, rematchStatus, rematchDeadline, chatMessages],
+    [screen, connected, connecting, name, mySocketId, room, error, busy, isHost, game, isKiller, gameEvents, setName, send, deathMarkers, standings, rematchStatus, rematchDeadline, chatMessages, latencyMs],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
