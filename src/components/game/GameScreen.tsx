@@ -17,8 +17,26 @@ function formatMs(ms: number) {
   return `${m}:${s}`;
 }
 
+function PingBadge({ latencyMs }: { latencyMs: number | null }) {
+  const ms = latencyMs ?? 0;
+  const colorClass =
+    ms < 50 ? "text-emerald-400 bg-emerald-400/10 ring-emerald-400/20" :
+    ms <= 150 ? "text-amber-400 bg-amber-400/10 ring-amber-400/20" :
+    "text-destructive bg-destructive/10 ring-destructive/20";
+
+  return (
+    <div
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-mono font-semibold ring-1 ${colorClass}`}
+      title="Latency to server"
+    >
+      <span className={`mr-1.5 inline-block size-1.5 rounded-full ${ms < 50 ? "bg-emerald-400" : ms <= 150 ? "bg-amber-400" : "bg-destructive"}`} />
+      {latencyMs === null ? "--" : `${ms}ms`}
+    </div>
+  );
+}
+
 export function GameScreen() {
-  const { game, mySocketId, isKiller, move, shakeTrigger, gameEvents, deathMarkers } = useGame();
+  const { game, mySocketId, isKiller, move, shakeTrigger, gameEvents, deathMarkers, latencyMs } = useGame();
   const isMobile = useIsMobile();
   const [isShaking, setIsShaking] = useState(false);
   const [now, setNow] = useState(Date.now());
